@@ -1,9 +1,15 @@
-# 🚌 GIST New Bus 🌱
+# 📍 GIST New Bus 🚌
 
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white) ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) ![Cloudflare Pages](https://img.shields.io/badge/Cloudflare_Pages-F38020?style=for-the-badge&logo=cloudflarepages&logoColor=white)
+<div align="center">
+  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" />
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css&logoColor=white" />
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+  <img src="https://img.shields.io/badge/Cloudflare_Pages-F38020?style=for-the-badge&logo=cloudflarepages&logoColor=white" />
+</div>
+
+<br>
 
 **2026년 10월 31일 예정된 광주 시내버스 노선 개편**을 앞두고,   
-
 **GIST 주변에서 어떤 버스를 타면 좋을지** 쉽게 찾아볼 수 있도록 만든 웹사이트입니다.
 
 새 노선도는 낯설고, 정류장 이름은 비슷하고, 급행과 일반 버스는 어디가 다른지 궁금하셨나요?   
@@ -16,6 +22,7 @@
 
 별도 설치나 로그인 없이 접속하면 됩니다. 휴대폰에서도 사용할 수 있어요!
 
+<br>
 
 ---
 ## ✨ 어떤 정보를 볼 수 있나요?
@@ -26,6 +33,7 @@ GIST 주변을 지나는 **15개 노선**을 지도와 함께 살펴볼 수 있�
 노선을 누르면 **배차 간격, GIST 주변 정차 정류장, 주요 경유지와 예상 소요 시간**이 나옵니다.   
 기본 화면에서는 주요 경유지를 보여주고, **전체 노선도 보기**를 누르면 중간에 생략된 정류장들도 확인할 수 있어요.
 
+<br>
 
 ### **📍 2. 주요 거점 경로**
 광주송정역, 광주역, 광주종합버스터미널, 국립아시아문화전당,   
@@ -34,6 +42,7 @@ GIST 주변을 지나는 **15개 노선**을 지도와 함께 살펴볼 수 있�
 
 같은 노선이라도 어느 정류장에서 출발하느냐에 따라 시간이 다르니, 출발 정류장도 함께 확인해주세요 :)
 
+<br>
 
 ### **🚏 3. 주변 정류장**
 학교 주변의 정류장 네 곳을 지도에서 찾아볼 수 있어요.
@@ -45,6 +54,7 @@ GIST 주변을 지나는 **15개 노선**을 지도와 함께 살펴볼 수 있�
 정류장 이름이 같아도 **길 건너편은 버스가 가는 방향이 달라요!**   
 방향별 정류장을 누르면 지도에서 위치와 정차 노선을 확인할 수 있습니다.
 
+<br>
 
 ### **⚡ 4. 완급행 비교**
 **급행 03 vs. 간선 03** / **급행 05 vs. 간선 05**를 나란히 비교할 수 있어요.
@@ -54,6 +64,7 @@ GIST 주변을 지나는 **15개 노선**을 지도와 함께 살펴볼 수 있�
 
 버스 번호가 비슷해서 헷갈릴 때, 어디서 차이가 나는지 살펴보세요 :D
 
+<br>
 
 ---
 ## 💡 이용 전에 확인해주세요
@@ -61,6 +72,8 @@ GIST 주변을 지나는 **15개 노선**을 지도와 함께 살펴볼 수 있�
 - 배차 간격은 노선별로 안내된 **범위**로 표시합니다.
 - 예상 소요 시간은 화면에 적힌 **출발 기준 정류장**부터의 시간입니다. 도보와 버스 대기 시간은 포함하지 않으며, 실제 교통 상황에 따라 달라질 수 있어요.
 - 더 많은 노선 정보나 길찾기 등을 확인하고 싶다면 [공식 개편 노선 검색 시스템](http://125.136.150.185:8604/renewal/line)을 참고해 주세요.
+
+<br>
 
 ---
 ## 📚 자료 안내
@@ -70,10 +83,11 @@ GIST 주변을 지나는 **15개 노선**을 지도와 함께 살펴볼 수 있�
 | 구분           | 기준                        |
 | ------------ | ------------------------- |
 | 정류장 위치·순서 확인 | 2026. 10. 26.             |
-| 배차 간격 갱신     | 2026. 10. 27. 제공받은 노선별 안내 |
+| 배차 간격 갱신     | 2026. 10. 27.             |
 
 개편 내용은 이후 변경될 수 있으니, 버스 이용 전 공식 안내도 함께 확인해주세요.
 
+<br>
 
 ---
 ## 🛠️ 히스토리
@@ -85,6 +99,7 @@ GIST 주변을 지나는 **15개 노선**을 지도와 함께 살펴볼 수 있�
 `v26.10.27.1`
 - 사이트를 공개했어요.
 
+<br>
 
 ---
 Made by **[kjw3640](https://github.com/kjw3640)**
