@@ -10,7 +10,7 @@ const HUBS = [
  {name:'광주종합버스터미널',sub:'유스퀘어',icon:'bus',rows:[['급행 03',S.B,33],['03',S.B,38],['09',S.E,34],['09',S.G,33],['34',S.D,50,12]]},
  {name:'국립아시아문화전당',sub:'ACC',icon:'culture',rows:[['급행 05',S.B,30],['05',S.B,47],['09',S.B,54],['09',S.E,45],['09',S.G,44],['30',S.E,66],['30',S.G,65],['51',S.B,50],['51',S.E,46],['51',S.G,45]]},
  {name:'광주기아챔피언스필드',sub:'야구장',icon:'ball',rows:[['급행 05',S.B,20],['05',S.B,38],['51',S.B,41],['51',S.E,37],['51',S.G,36]]},
- {name:'비아고속버스정류소',sub:'고속버스',icon:'bus',rows:[['192',S.G,6]],note:'192번 장성마산 방면 · 배차 150분 유의'},
+ {name:'비아고속버스정류소',sub:'고속버스',icon:'bus',rows:[['192',S.G,6]],note:'192번 장성마산 방면 · 배차 65–110분 유의'},
  {name:'KENTECH',sub:'한국에너지공과대학교',icon:'school',rows:[['1002',S.B,46]]}
 ];
 
@@ -70,6 +70,8 @@ const displayRouteName = id => id==='1002'?'직행1002':id.replace('급행 ','�
 const getRouteType = id => id==='1002'?'metropolitan':id.startsWith('급행')?'express':['43','91','192','193'].includes(id)?'branch':'trunk';
 const colorGroup = id => ROUTE_TYPES[getRouteType(id)].colorGroup;
 const badge = (id,large=false) => `<span class="route-badge ${colorGroup(id)} ${large?'large':''}">${id==='1002'?'<small>직행</small>1002':id.startsWith('급행')?`<small>급행</small>${id.slice(3)}`:id}</span>`;
+const intervalValue = route => route.interval.replace(/분$/, '');
+const isInfrequent = route => Math.max(...route.interval.match(/\d+/g).map(Number))>=100;
 const routeStopIds = id => liveStopOrders.get(id) || ROUTE_STOP_ORDER[id];
 const lookupStop = id => liveStopRecords.get(id) || CAMPUS_STOPS.find(s=>s.id===id) || ALL_STOPS[id];
 const directionLabel = stop => {
@@ -197,7 +199,7 @@ function renderRouteList() {
  $('#filteredCount').textContent=`${list.length}개`;
  $('#routeList').innerHTML=list.map(r=>`<button class="route-item ${state.route===r.id?'selected':''}" data-route="${r.id}" aria-pressed="${state.route===r.id}">
   ${badge(r.id)}<span class="route-item-copy"><b>${majorViaHtml(r)}</b><small><span>종점</span> ${escapeHtml(r.head.split(' → ')[1])}</small></span>
-  <span class="route-frequency ${parseInt(r.interval)>=100?'infrequent':''}"><small>배차 간격</small><span><b>${parseInt(r.interval)}</b>분</span></span>
+  <span class="route-frequency ${isInfrequent(r)?'infrequent':''}"><small>배차 간격</small><span><b>${intervalValue(r)}</b>분</span></span>
  </button>`).join('')||'<div class="empty"><b>조건에 맞는 노선이 없어요</b><p>검색어나 정류장 조건을 바꿔 보세요.</p><button class="reset-empty" type="button">필터 초기화</button></div>';
  container.scrollLeft=scrollLeft;container.scrollTop=scrollTop;
  container.querySelector('.reset-empty')?.addEventListener('click',()=>{resetFilters();$('#routeQuery').focus();});
@@ -261,22 +263,22 @@ function renderDetail() {
  const selectedDestination=journey?.destination==='KENTECH'?'한국에너지공과대학교':journey?.destination;
  $('#routeDetail').innerHTML=`${state.returnView?`<div class="detail-return"><button id="returnToResults" type="button">← ${state.returnView==='destinations'?'거점 목록':'완급행 비교'}으로 돌아가기</button></div>`:''}
  ${journey?`<div class="journey-context"><div><span>선택한 이동 · 환승 없음</span><b>${escapeHtml(journey.from)} → ${escapeHtml(journey.destination)}</b></div><strong>${journey.minutes}<small>분 예상</small></strong></div>`:''}
- <div class="detail-top">
+ <div class="detail-layout"><div class="detail-top">
   <div class="detail-route-title">${badge(r.id,true)}<div><h2 id="detailTitle" tabindex="-1">${ROUTE_TYPES[getRouteType(r.id)].label} ${r.id.replace(/^급행\s*/, '')}번</h2><p>${r.head.replace(' → ',' ↔ ')}</p></div></div>
-  <div class="interval-box"><span>배차 간격</span><strong class="${parseInt(r.interval)>=100?'infrequent':''}">${parseInt(r.interval)}<small>분</small></strong></div>
+  <div class="interval-box"><span>배차 간격</span><strong class="${isInfrequent(r)?'infrequent':''}">${intervalValue(r)}<small>분</small></strong></div>
   <div class="served-campus"><h3>이 노선의 GIST 주변 정류장</h3><div>${localStops.map(name=>`<button class="campus-route-chip" data-campus="${name}"><i></i>${name}</button>`).join('')}</div></div>
   ${highlights.length?`<div class="highlight-grid">${highlights.map(h=>`<div><small>${h.name}</small><strong>${h.mins}<span>분</span></strong></div>`).join('')}</div>`:''}
   ${r.id==='192'?'<div class="direction-note"><b>비아고속버스정류소는 장성마산 방면</b><span>과기원에서 <strong>6분</strong> · 아래 시간표와 반대 방향</span></div>':''}
  </div>
- <div class="timeline-heading"><div class="timeline-title-group"><h3>${state.fullTimeline?'전체 노선도':'주요 경유지'}</h3><button id="toggleTimeline" type="button" aria-pressed="${state.fullTimeline}">${state.fullTimeline?'주요 경유지만 보기':'전체 노선도 보기'}</button></div><span>예상 소요 시간</span></div>
- <p class="timeline-caption">${base} 출발 기준${timelineDirection}${state.fullTimeline?'<span class="full-timeline-note">안내된 정류장만 시간 표시</span>':''}${journey&&journey.from!==base?'<span class="basis-note">위에서 선택한 이동과 출발 기준이 달라요.</span>':''}</p>
+ <div class="detail-timeline"><div class="timeline-heading"><div class="timeline-title-group"><h3>${state.fullTimeline?'전체 노선도':'주요 경유지'}</h3><button id="toggleTimeline" type="button" aria-pressed="${state.fullTimeline}">${state.fullTimeline?'주요 경유지만 보기':'전체 노선도 보기'}</button></div><span>예상 소요 시간</span></div>
+ <p class="timeline-caption">${base} 출발 기준${timelineDirection}${state.fullTimeline?'<span class="full-timeline-note">주요 정류장만 시간 표시</span>':''}${journey&&journey.from!==base?'<span class="basis-note">위에서 선택한 이동과 출발 기준이 달라요.</span>':''}</p>
  <div class="timeline ${group}">${timelineStops?timelineStops.map(([name,time,kind,sourceName])=>{
   const markedName=state.fullTimeline?sourceName:name;
   const important=annotations.major.includes(markedName)||(r.id==='03'&&markedName==='중흥삼거리역 (광주역)');
   const label=state.fullTimeline?(important?`<b>${escapeHtml(name)}${r.id==='03'&&markedName==='중흥삼거리역 (광주역)'?' (광주역)':''}</b>`:escapeHtml(name)):timelineStopName(r.id,name);
   return `<div class="timeline-row ${kind==='origin'?'origin':time===0?'departure':''}${selectedDestination&&(name.includes(selectedDestination)||markedName?.includes(selectedDestination))?' destination':''}"><span class="timeline-line"><i></i></span><span class="timeline-stop">${label}${transferMark(markedName)}${kind==='origin'?'<small>기점</small>':time===0?'<small>출발 기준</small>':''}</span><strong>${time===null?'':time+'<small>분</small>'}</strong></div>`;
  }).join(''):'<p class="timeline-unavailable">이 방향의 전체 정류장 순서를 확인할 수 없습니다. 주요 경유지를 확인해 주세요.</p>'}</div>
- <div class="detail-foot"><p>${state.fullTimeline?'':'주요 정류장을 중심으로 안내합니다. '}실제 이동 시간과 배차 간격은 교통 상황에 따라 달라질 수 있습니다.</p></div>`;
+ </div></div><div class="detail-foot"><p>${state.fullTimeline?'':'주요 정류장을 중심으로 안내합니다. '}실제 이동 시간과 배차 간격은 교통 상황에 따라 달라질 수 있습니다.</p></div>`;
  $('#routeDetail').querySelectorAll('[data-campus]').forEach(button=>button.onclick=()=>{
   filterByCampus(button.dataset.campus);
   $('.map-pane').scrollIntoView({block:'nearest',behavior:reducedMotion()?'auto':'smooth'});
@@ -385,17 +387,29 @@ function renderStops() {
 
 function sortedHubRows(h) {return [...h.rows].sort((a,b)=>a[2]-b[2]);}
 
+function destinationColumnCount() {
+ if(typeof matchMedia!=='function')return 1;
+ return matchMedia('(min-width:1600px)').matches?4:matchMedia('(min-width:1200px)').matches?3:matchMedia('(min-width:761px)').matches?2:1;
+}
+let renderedDestinationColumns=0;
 function renderDestinations({animate=false}={}) {
  const selected=$('#hubFilter').value;
  function card(h) {
   const rows=sortedHubRows(h);
-  return `<article class="hub-card"><div class="hub-title"><span>${icon(h.icon)}</span><div><h3>${h.name}</h3><small>${h.sub}</small></div><div class="hub-fastest">최단 <b>${rows[0][2]}</b>분</div></div><div class="hub-rows">${rows.map(([id,from,mins])=>`<button class="hub-row" data-route="${id}" data-from="${from}" data-destination="${h.name}" data-minutes="${mins}" aria-label="${displayRouteName(id)}, ${from}에서 ${h.name}까지 ${mins}분, 상세 보기">${badge(id)}<span>${from}</span><strong>${mins}<small>분</small></strong><i>›</i></button>`).join('')}</div>${h.note?`<div class="hub-note">${h.note}</div>`:''}</article>`;
+  return `<article class="hub-card"><div class="hub-title"><span>${icon(h.icon)}</span><div><h3>${h.name}</h3><small>${h.sub}</small></div><div class="hub-fastest">최단 <b>${rows[0][2]}</b>분</div></div><div class="hub-rows">${rows.map(([id,from,mins])=>`<button class="hub-row" data-route="${id}" data-from="${from}" data-destination="${h.name}" data-minutes="${mins}" aria-label="${displayRouteName(id)}, ${from}에서 ${h.name}까지 ${mins}분, 상세 보기">${id==='1002'?'<span class="route-badge pink">1002</span>':badge(id)}<span>${from}</span><strong>${mins}<small>분</small></strong><i>›</i></button>`).join('')}</div>${h.note?`<div class="hub-note">${h.note}</div>`:''}</article>`;
  }
  const isFiltered=selected!=='all';
  $('#destinationGrid').classList.toggle('filtered',isFiltered);
- $('#destinationGrid').innerHTML=isFiltered
-  ?`<div class="destination-column">${HUBS.filter(h=>h.name===selected).map(card).join('')}</div>`
-  :[[0,1,2],[3,5],[4,6]].map(group=>`<div class="destination-column">${group.map(i=>card(HUBS[i])).join('')}</div>`).join('');
+ const count=isFiltered?1:destinationColumnCount();
+ renderedDestinationColumns=destinationColumnCount();
+ const groups=isFiltered?[[HUBS.findIndex(h=>h.name===selected)]]:({
+  1:[[0,1,2,3,4,5,6]],
+  2:[[0,1,3],[2,4,5,6]],
+  3:[[0,1,4],[2,5,6],[3]],
+  4:[[0,1,6],[2,5],[4],[3]]
+ })[count];
+ $('#destinationGrid').setAttribute('data-columns',String(count));
+ $('#destinationGrid').innerHTML=groups.map(group=>`<div class="destination-column">${group.filter(i=>i>=0).map(i=>card(HUBS[i])).join('')}</div>`).join('');
  $('#destinationGrid').querySelectorAll('[data-route]').forEach(b=>b.onclick=()=>openHubRoute(b.dataset));
  if(animate)revealContent($('#destinationGrid'),{duration:320});
 }
@@ -425,7 +439,7 @@ function renderStopPattern(pair) {
  const expressSet=new Set(expressStops);
  const shared=regularStops.filter(id=>expressSet.has(id)).length;
  return `<details class="stop-comparison" open><summary><span>정차 정류장 비교<small>광주과학기술원후문 → 종점 방면</small></span><strong>완행·급행 모두 정차 ${shared}곳 / 완행만 정차 ${regularStops.length-shared}곳</strong></summary>
-  <div class="stop-compare-legend"><span><i class="shared"></i>두 노선 모두 정차</span><span><i class="regular-only"></i>일반 노선만 정차</span></div>
+  <div class="stop-compare-legend"><span><i class="shared"></i>급행 정차 정류장</span><span><i class="regular-only"></i>완행 정차 정류장</span></div>
   <div class="stop-compare-head"><span>${displayRouteName(pair.express)}</span><span>${displayRouteName(pair.regular)}</span><span>정류장</span></div>
   <ol class="stop-compare-list">${regularStops.map(stopId=>{
    const sharedStop=expressSet.has(stopId);
@@ -441,7 +455,7 @@ function renderComparison() {
    return `<tr><th scope="row">${escapeHtml(name)}</th><td>${fastTime}<small>분</small></td><td>${regularTime}<small>분</small></td><td class="compare-difference">${regularTime-fastTime}<small>분 차이</small></td></tr>`;
   }).join('');
   return `<article class="compare-card"><div class="compare-card-heading"><span>${pair.title}</span><h3>${escapeHtml(fast.head.split(' → ')[1])} 방면</h3><p>광주과학기술원후문 출발 기준</p></div>
-   <div class="compare-summary"><div>${badge(pair.express)}<span>배차 간격 <b>${parseInt(fast.interval)}분</b></span></div><div>${badge(pair.regular)}<span>배차 간격 <b>${parseInt(regular.interval)}분</b></span></div></div>
+   <div class="compare-summary"><div>${badge(pair.express)}<span><small>배차 간격</small><b>${fast.interval}</b></span></div><div>${badge(pair.regular)}<span><small>배차 간격</small><b>${regular.interval}</b></span></div></div>
    <div class="compare-scroll"><table class="compare-table"><thead><tr><th scope="col">주요 경유지</th><th scope="col">${pair.express}</th><th scope="col">${pair.regular}</th><th scope="col">시간 차이</th></tr></thead><tbody>${rows}</tbody></table></div>
    <div class="compare-actions"><button data-route="${pair.express}">${badge(pair.express)} 노선 자세히</button><button data-route="${pair.regular}">${badge(pair.regular)} 노선 자세히</button></div>
    ${renderStopPattern(pair)}</article>`;
@@ -520,6 +534,9 @@ function setup() {
   }
  });
  $('#hubFilter').onchange=()=>renderDestinations({animate:true});
+ if(typeof window!=='undefined')window.addEventListener('resize',()=>{
+  if(destinationColumnCount()!==renderedDestinationColumns)renderDestinations();
+ });
  $('#campusView').onclick=()=>setMapMode('campus');
  $('#fullRouteView').onclick=()=>setMapMode('route');
  $('#retryMap').onclick=()=>BusMap.retry().then(ready=>{if(ready) refreshOfficialRoute(state.route);});

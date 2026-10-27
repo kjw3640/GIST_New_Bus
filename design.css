@@ -623,3 +623,109 @@ select{height:42px;font-size:13px}
 @media (min-width: 761px){
  .workspace.stops-mode{border-radius:14px;overflow:clip}
 }
+
+/* 카드 개수와 높이를 고려한 화면별 열 묶음. */
+.destination-grid{display:grid;column-count:auto;grid-template-columns:1fr;gap:24px;align-items:start}
+.destination-grid[data-columns="2"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+.destination-grid[data-columns="3"]{grid-template-columns:repeat(3,minmax(0,1fr))}
+.destination-grid[data-columns="4"]{grid-template-columns:repeat(4,minmax(0,1fr))}
+.destination-grid .destination-column{display:flex;grid-column:auto;flex-direction:column;gap:24px;min-width:0}
+.destination-grid.filtered{grid-template-columns:minmax(0,640px);max-width:640px;margin-inline:auto}
+.stop-compare-row.regular-only{background:#fff7e5}
+.comparison-view{max-width:1400px;margin-inline:auto}
+.compare-table{table-layout:fixed}
+.compare-table th:first-child{width:43%}
+.compare-table th:not(:first-child){width:19%}
+.compare-table tbody th{overflow-wrap:anywhere}
+.highlight-grid>div{padding:16px 18px}
+@media(min-width:761px) and (max-width:1199px){
+ .detail-top{display:grid;width:100%;max-width:none;margin:0;grid-template-columns:minmax(0,1.2fr) minmax(240px,.8fr);gap:20px 28px;padding:24px;background:linear-gradient(180deg,#faf2f3 0%,#fff 100%);align-items:start}
+ .detail-route-title{grid-column:1;grid-row:1;align-self:center}
+ .interval-box{grid-column:2;grid-row:1;justify-self:end;padding:0;margin:0;border:0;align-self:center}
+ .served-campus{grid-column:1;grid-row:2;border-top:0;margin:0;padding:0}
+ .served-campus h3{margin-top:0}
+ .served-campus>div{display:flex;flex-wrap:wrap;gap:8px}
+ .campus-route-chip{width:auto;flex:0 1 auto}
+ .highlight-grid{grid-column:2;grid-row:2;align-self:start;margin:0;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+ .highlight-grid>div{padding:16px 18px}
+ .direction-note{grid-column:1/-1}
+ .timeline,.timeline-caption{max-width:850px;margin-inline:auto;width:100%}
+}
+@media(min-width:761px) and (max-width:899px){
+ .detail-top{grid-template-columns:minmax(0,1fr) 90px;gap:18px 20px;padding:24px 28px}
+ .served-campus{grid-column:1/-1;grid-row:2}
+ .highlight-grid{grid-column:1/-1;grid-row:3;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+}
+
+/* 제목·출발 기준·정류장·시간을 같은 읽기 폭과 좌우 기준선에 맞춘다. */
+.route-detail{--timeline-max:100%;--timeline-inset:20px}
+.route-detail .timeline,.route-detail .timeline-caption{
+ width:min(100%,var(--timeline-max));max-width:none;margin-inline:auto;
+ padding-left:var(--timeline-inset);padding-right:var(--timeline-inset)
+}
+.route-detail .timeline-heading{
+ padding-left:max(var(--timeline-inset),calc((100% - var(--timeline-max))/2 + var(--timeline-inset)));
+ padding-right:max(var(--timeline-inset),calc((100% - var(--timeline-max))/2 + var(--timeline-inset)))
+}
+.timeline-heading>span{margin-left:auto;text-align:right}
+@media(min-width:761px) and (max-width:1199px){
+ .route-detail{--timeline-max:640px;--timeline-inset:24px}
+}
+@media(max-width:760px){.route-detail{--timeline-inset:19px}}
+@media(max-width:480px){.route-detail{--timeline-inset:15px}}
+
+/* 같은 화면 구성 안에서는 배지와 배차 글자 크기를 일정하게 유지한다. */
+.detail-layout,.detail-timeline{display:contents}
+@media(min-width:761px) and (max-width:1199px){
+ .detail-route-title .route-badge.large{height:48px;font-size:25px;flex-shrink:0}
+ .detail-route-title .route-badge.large.pink{height:48px;font-size:25px}
+ .route-frequency{min-width:42px;font-size:10px}
+ .route-frequency b{font-size:17px}
+ .route-frequency>small{font-size:10px}
+}
+/* 중간 화면의 빈 공간에 노선 요약을 배치하고 오른쪽에 노선도를 둔다. */
+@media(min-width:950px) and (max-width:1199px){
+ .route-detail{--timeline-max:100%;--timeline-inset:24px}
+ .detail-layout{display:grid;grid-template-columns:minmax(280px,.8fr) minmax(0,1.2fr);align-items:start}
+ .detail-layout>.detail-top{position:sticky;top:72px;display:grid;grid-template-columns:minmax(0,1fr) 65px;gap:20px 12px;padding:24px 20px;border-top:5px solid #eaf1f4}
+ .detail-layout .detail-route-title{grid-column:1/-1;grid-row:1}
+ .detail-layout .interval-box{grid-column:1/-1;grid-row:2;justify-self:start;display:flex;flex-direction:row;align-items:baseline;gap:12px}
+ .detail-layout .served-campus{grid-column:1/-1;grid-row:3}
+ .detail-layout .highlight-grid{grid-column:1/-1;grid-row:4;grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
+ .detail-layout .direction-note{grid-column:1/-1;grid-row:auto}
+ .detail-timeline{display:block;min-width:0;border-left:1px solid #eadde0;background:#fff}
+}
+
+/* 범위 배차 표시는 숫자를 생략하거나 줄바꿈하지 않는다. */
+.route-frequency b,.interval-box strong{white-space:nowrap}
+.route-frequency{flex-shrink:0}
+.route-frequency b{font-size:15px}
+.interval-box strong{font-size:28px}
+.compare-summary>div>span:last-child{display:flex;flex-direction:column;align-items:flex-end;gap:3px;line-height:1.25}
+.compare-summary>div>span:last-child>small{font-size:10px;font-weight:500;white-space:nowrap}
+.compare-summary b{white-space:nowrap;font-size:15px}
+@media(max-width:760px){.route-frequency b{font-size:14px}.interval-box strong{font-size:25px}}
+@media(max-width:480px){.compare-summary b{font-size:13px}.compare-summary>div{gap:5px}.compare-summary .route-badge{width:58px;min-width:58px;max-width:58px}}
+@media(min-width:950px) and (max-width:1199px){
+ .detail-layout>.detail-top{padding:30px 24px 28px;gap:26px 12px;background:linear-gradient(180deg,#faf2f3,#fff)}
+ .detail-layout .detail-route-title{padding-bottom:4px;gap:12px}
+ .detail-layout .interval-box{justify-self:stretch;justify-content:space-between;padding:18px 0;border-top:1px solid #eadde0;border-bottom:1px solid #eadde0}
+ .detail-layout .interval-box>span{font-size:12px}
+ .detail-layout .interval-box strong{font-size:30px}
+ .detail-layout .served-campus h3{margin:0 0 12px;line-height:1.5}
+ .detail-layout .served-campus>div{gap:10px}
+ .detail-layout .highlight-grid{gap:12px;margin-top:2px}
+ .detail-layout .highlight-grid>div{padding:18px 16px}
+}
+
+/* 주요 거점 경로의 급행 분류를 더 읽기 쉽게 표시한다. */
+.hub-row .route-badge.express small{font-size:10px}
+
+/* 완급행 비교 카드 간격과 노선 배지 가독성 */
+@media(min-width:1200px){.comparison-grid{column-gap:48px}}
+@media(min-width:1600px){.comparison-grid{column-gap:64px}}
+.compare-summary .route-badge.express small{font-size:10px}
+.compare-actions .route-badge{height:32px;min-width:64px;padding:0 8px;font-size:15px;flex-shrink:0}
+.compare-actions .route-badge.express{flex-direction:row;gap:3px}
+.compare-actions .route-badge.express small{font-size:10px}
+.compare-actions button{font-size:13px}
